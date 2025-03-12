@@ -72,8 +72,8 @@
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     mode: "0644"
-    owner: "{{ traefik_user }}"
-    group: "{{ traefik_user }}"
+    owner: "{{ semaphore_user }}"
+    group: "{{ semaphore_user }}"
   loop:
     - { src: "{{ semaphore_config_template }}", dest: /etc/semaphore/config.json }
     - { src: "{{ semaphore_ansible_config_template }}", dest: /etc/ansible/ansible.cfg }
