@@ -97,7 +97,7 @@
     --email '{{ semaphore_admin_email }}' \
     --config /etc/semaphore/config.json
   register: semaphore_admin
-  failed_when: (semaphore_admin.rc == 2 or semaphore_admin.rc == 3) and && 'duplicate key value violates unique constraint' not in semaphore_admin.stderr
+  failed_when: (semaphore_admin.rc == 2 or semaphore_admin.rc == 3) and 'duplicate key value violates unique constraint' not in semaphore_admin.stderr
 
 - name: Ensure semaphore service file is on remote
   ansible.builtin.template:
