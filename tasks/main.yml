@@ -1,0 +1,71 @@
+---
+# tasks file for semaphore
+- name: Install ansible and git
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - ansible
+    - git
+
+- name: Get latest version of Semaphore
+  ansible.builtin.uri:
+    url: "{{ semaphore_latest_url }}"
+    return_content: true
+  register: semaphore_latest
+
+- name: Parse the JSON response to get the download URL for {{ semaphore_arch }}
+  ansible.builtin.set_fact:
+    linux_download_url: "{{ item.browser_download_url }}"
+  loop: "{{ semaphore_latest.json.assets | selectattr('browser_download_url', 'search', 'linux_' + semaphore_arch) | list }}"
+  when: linux_download_url is not defined
+
+- name: Ensure semaphore directory exists
+  ansible.builtin.file:
+    path: "{{ semaphore_dir }}"
+    state: directory
+    mode: "0755"
+    owner: "{{ semaphore_user }}"
+    group: "{{ semaphore_user }}"
+
+- name: Extract semaphore to {{ semaphore_dir }}
+  ansible.builtin.unarchive:
+    src: "{{ linux_download_url }}"
+    dest: "{{ semaphore_dir }}"
+    remote_src: true
+    mode: "0755"
+    owner: "{{ semaphore_user }}"
+    group: "{{ semaphore_user }}"
+  notify: restart semaphore
+
+- name: Ensure semaphore config directory exists
+  ansible.builtin.file:
+    path: /etc/semaphore
+    state: directory
+    mode: "0755"
+    owner: "{{ semaphore_user }}"
+    group: "{{ semaphore_user }}"
+
+- name: Ensure templates are deployed on remote
+  ansible.builtin.template:
+    src: "{{ semaphore_config_template }}"
+    dest: /etc/semaphore/config.json
+    mode: "0644"
+    owner: "{{ semaphore_user }}"
+    group: "{{ semaphore_user }}"
+  notify: restart semaphore
+
+- name: Ensure semaphore service file is on remote
+  ansible.builtin.template:
+    src: semaphore.service.j2
+    dest: /etc/systemd/system/semaphore.service
+    mode: "0664"
+    owner: "{{ semaphore_user }}"
+    group: "{{ semaphore_user }}"
+  notify: restart semaphore
+
+- name: Ensure semaphore service is enabled and started
+  ansible.builtin.systemd:
+    name: semaphore
+    state: started
+    enabled: true
