@@ -7,7 +7,7 @@ After=network-online.target
 [Service]
 Type=simple
 ExecReload=/bin/kill -HUP $MAINPID
-ExecStart=semaphore server --config=/etc/semaphore/semaphore_config.json
+ExecStart=semaphore server --config=/etc/semaphore/config.json
 SyslogIdentifier=semaphore
 Restart=always
 RestartSec=10s
