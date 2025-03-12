@@ -17,7 +17,7 @@
 - name: Parse the JSON response to get the download URL for {{ semaphore_arch }}
   ansible.builtin.set_fact:
     linux_download_url: "{{ item.browser_download_url }}"
-  loop: "{{ semaphore_latest.json.assets | selectattr('browser_download_url', 'search', 'linux_' + semaphore_arch) | list }}"
+  loop: "{{ semaphore_latest.json.assets | selectattr('browser_download_url', 'search', 'linux_' + semaphore_arch + '.tar.gz') | list }}"
   when: linux_download_url is not defined
 
 - name: Ensure semaphore directory exists
