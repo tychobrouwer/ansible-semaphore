@@ -58,6 +58,7 @@
 - name: Ensure semaphore admin user exists
   ansible.builtin.command: |
     semaphore user add \
+    --admin \
     --login {{ semaphore_admin_login }} \
     --password '{{ semaphore_admin_password }}' \
     --name '{{ semaphore_admin_name }}' \
