@@ -52,7 +52,7 @@ Here’s an example Ansible playbook demonstrating how to use this role:
     - role: tychobrouwer.semaphore
       semaphore_arch: "amd64"
       semaphore_dir: "/usr/local/bin"
-      semaphore_config_template: "/templates/semaphore.toml.j2"
+      semaphore_config_template: "/templates/semaphore.json.j2"
 ```
 
 ---
