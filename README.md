@@ -54,11 +54,15 @@ Here’s an example Ansible playbook demonstrating how to use this role:
     - role: tychobrouwer.semaphore  # Default installation
       semaphore_admin_password: "{{ semaphore_admin_password }}"
       semaphore_admin_email: "{{ semaphore_admin_email }}"
+      semaphore_vault_pass: "{{ semaphore_vault_pass }}"
 
     - role: tychobrouwer.semaphore
       semaphore_arch: "amd64"
       semaphore_dir: "/usr/local/bin"
       semaphore_config_template: "/templates/semaphore.json.j2"
+      semaphore_ansible_config_template: "/templates/semaphore_ansible.cfg.j2"
+      semaphore_vault_pass_path: "/etc/ansible/vault_pass"
+      semaphore_vault_pass: "{{ semaphore_vault_pass }}"
       semaphore_admin_login: admin
       semaphore_admin_name: admin
 ```

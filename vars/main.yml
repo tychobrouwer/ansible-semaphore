@@ -9,3 +9,5 @@ semaphore_group: root
 
 semaphore_admin_login: admin
 semaphore_admin_name: admin
+
+semaphore_vault_path: /etc/ansible/vault

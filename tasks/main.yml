@@ -66,7 +66,27 @@
     owner: "{{ semaphore_user }}"
     group: "{{ semaphore_user }}"
   notify: restart semaphore
-  
+
+- name: Ensure templates are deployed on remote
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "0644"
+    owner: "{{ traefik_user }}"
+    group: "{{ traefik_user }}"
+  loop:
+    - { src: "{{ semaphore_config_template }}", dest: /etc/semaphore/config.json }
+    - { src: "{{ semaphore_ansible_config_template }}", dest: /etc/ansible/ansible.cfg }
+  notify: restart semaphore
+
+- name: Create ansible vault_password_file
+  ansible.builtin.copy:
+    dest: "{{ semaphore_vault_pass_path }}"
+    content: "{{ semaphore_vault_password }}"
+    mode: "0600"
+    owner: "{{ semaphore_user }}"
+    group: "{{ semaphore_user }}"
+
 - name: Ensure semaphore admin user exists
   ansible.builtin.command: |
     semaphore user add \
