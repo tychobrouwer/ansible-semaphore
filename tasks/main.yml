@@ -5,8 +5,20 @@
     name: "{{ item }}"
     state: present
   loop:
-    - ansible
     - git
+    - python3-pip
+
+- name: Install pip dependencies
+  ansible.builtin.pip:
+    name:
+      - netaddr
+      - jmespath
+      - ansible
+      - pywinrm
+      - passlib
+      - requests
+    extra_args: --break-system-packages
+    state: present
 
 - name: Get latest version of Semaphore
   ansible.builtin.uri:
