@@ -36,6 +36,10 @@ The role uses several variables to customize the installation and configuration 
 | `semaphore_arch`              | Target architecture for Semaphore (e.g., `amd64`, `arm64`).                | `amd64`                       |
 | `semaphore_dir`               | Directory where the Semaphore binary will be installed.                    | `/usr/local/bin`              |
 | `semaphore_config_template`   | Path to a custom Jinja2 template for the static configuration file.        | `templates/semaphore.json.j2` |
+| `semaphore_admin_login`       | Username for the default admin account.                                    | `admin`                       |
+| `semaphore_admin_name`        | Full name for the default admin account.                                   | `admin`                       |
+| `semaphore_admin_email`       | Email address for the default admin account.                               | `admin@gmail.com`             |
+| `semaphore_admin_password`    | Password for the default admin account.                                    | `admin`                       |
 
 ---
 
@@ -48,11 +52,15 @@ Here’s an example Ansible playbook demonstrating how to use this role:
 - hosts: servers
   roles:
     - role: tychobrouwer.semaphore  # Default installation
-    
+      semaphore_admin_password: "{{ semaphore_admin_password }}"
+      semaphore_admin_email: "{{ semaphore_admin_email }}"
+
     - role: tychobrouwer.semaphore
       semaphore_arch: "amd64"
       semaphore_dir: "/usr/local/bin"
       semaphore_config_template: "/templates/semaphore.json.j2"
+      semaphore_admin_login: admin
+      semaphore_admin_name: admin
 ```
 
 ---
@@ -71,11 +79,29 @@ Here’s an example Ansible playbook demonstrating how to use this role:
 ## Usage Notes
 
 - **Custom Configuration**:
-  - Create `semaphore.json.j2` for a custom static configuration file.
-  - Example static config:
+  - Create `semaphore.json.j2` for a custom configuration file, [docs](https://docs.semaphoreui.com/administration-guide/configuration/).
+  - Example config:
 
     ```json
-
+    {
+        "postgres": {
+            "host": "localhost",
+            "name": "semaphoredb",
+            "user": "semaphore",
+            "pass": "{{ semaphore_db_password }}"
+        },
+        "dialect": "postgres",
+        "web_host": "https://semaphore.{{ domain }}",
+        "cookie_hash": "{{ semaphore_cookie_hash }}",
+        "cookie_encryption": "{{ semaphore_cookie_encryption }}",
+        "access_key_encryption": "{{ semaphore_access_key_encryption }}",
+        "email_sender": "{{ smtp_username }}",
+        "email_host": "{{ smtp_host }}",
+        "email_port": "{{ smtp_port }}",
+        "email_username": "{{ smtp_username }}",
+        "email_password": "{{ smtp_password }}",
+        "email_secure": true
+    }
     ```
 
 - **Verification**: After running the playbook, verify Semaphore is operational by checking the logs (`journalctl -u semaphore`) or accessing a configured route.

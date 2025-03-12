@@ -38,6 +38,15 @@
     group: "{{ semaphore_user }}"
   notify: restart semaphore
 
+- name: Ensure semaphore admin user exists
+  ansible.builtin.command: |
+    semaphore user add \
+    --login {{ semaphore_admin_login }} \
+    --password '{{ semaphore_admin_password }}' \
+    --name '{{ semaphore_admin_name }}' \
+    --email '{{ semaphore_admin_email }}' \
+    --config /etc/semaphore/config.json
+
 - name: Ensure semaphore config directory exists
   ansible.builtin.file:
     path: /etc/semaphore
